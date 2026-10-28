@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Model - AI Image Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #4CAF50;
+            --accent-dark: #45a049;
+            --red: #f44336;
+            --green: #4CAF50;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        /* Enhanced Professional Footer */
+footer {
+    background: #1a202c;
+    color: white;
+    padding: 2.5rem 0 1.5rem;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}
+
+.brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.brand-tagline {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+.developer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .developer-section {
+        align-items: center;
+    }
+}
+
+.developer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.developer-info:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.developer-logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.developer-text {
+    font-size: 0.95rem;
+    color: #a0aec0;
+}
+
+.developer-text strong {
+    color: white;
+    font-weight: 700;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    color: #a0aec0;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.social-link:hover {
+    color: white;
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2d3748;
+    color: #a0aec0;
+    font-size: 0.85rem;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Main Content */
+        .training-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            border-left: 4px solid;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.real {
+            border-left-color: var(--green);
+        }
+
+        .stat-card.ai {
+            border-left-color: var(--red);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .stat-card.real .stat-number {
+            color: var(--green);
+        }
+
+        .stat-card.ai .stat-number {
+            color: var(--red);
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .upload-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .upload-card {
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border: 2px dashed #ddd;
+            text-align: center;
+            transition: var(--transition);
+            background: #f8f9fa;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .upload-card.real:hover {
+            border-color: var(--green);
+            background: #f0f9f0;
+        }
+
+        .upload-card.ai:hover {
+            border-color: var(--red);
+            background: #fef0f0;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-card.real .upload-icon {
+            color: var(--green);
+        }
+
+        .upload-card.ai .upload-icon {
+            color: var(--red);
+        }
+
+        .upload-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .upload-card p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .upload-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .file-list {
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            border: 1px solid #f1f3f4;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            background: white;
+        }
+
+        .file-item {
+            padding: 8px;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item i {
+            color: var(--green);
+            font-size: 0.8rem;
+        }
+
+        /* Training Section */
+        .training-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .training-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .training-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .dataset-status {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: #f8f9fa;
+        }
+
+        .train-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 1.5rem 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .train-btn:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .train-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Training Progress */
+        .training-progress {
+            display: none;
+            margin: 2rem 0;
+        }
+
+        .training-progress.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #f0f0f0;
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            height: 25px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Progress Stages */
+        .progress-stages {
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .progress-stage {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .stage-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            margin: 0 auto 5px;
+            transition: all 0.3s;
+        }
+
+        .stage-indicator.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .stage-indicator.completed {
+            background: var(--accent);
+        }
+
+        .stage-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .stage-label.active {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Time Estimate */
+        .time-estimate {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Training Result */
+        .training-result {
+            display: none;
+            margin: 2rem 0;
+        }
+
+        .training-result.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-card {
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid;
+        }
+
+        .success-result {
+            border-left-color: var(--green);
+            background: #e8f5e8;
+        }
+
+        .error-result {
+            border-left-color: var(--red);
+            background: #ffebee;
+        }
+
+        /* Info Card */
+        .info-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+
+        .info-card li i {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            color: var(--light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-stages {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .progress-stage {
+                flex: 0 0 calc(50% - 10px);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-card, .stat-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="fade-in">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h1>Train AI Image Detector</h1>
+                <p class="tagline">Add training images and build your custom AI detection model</p>
+                <a href="/" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="training-container">
+            <!-- Info Card -->
+            <div class="info-card fade-in">
+                <h3><i class="fas fa-info-circle"></i> How it works</h3>
+                <ul>
+                    <li><i class="fas fa-upload"></i> Upload real and AI-generated images to build your dataset</li>
+                    <li><i class="fas fa-brain"></i> The model will learn patterns from your specific images</li>
+                    <li><i class="fas fa-chart-line"></i> More images = Better accuracy (recommended: 50+ per category)</li>
+                    <li><i class="fas fa-clock"></i> Training may take 2-10 minutes depending on dataset size</li>
+                </ul>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div class="dashboard-section fade-in">
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card real">
+                        <div class="stat-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="stat-number" id="realCount">0</div>
+                        <div class="stat-label">Human-taken photos</div>
+                    </div>
+                    <div class="stat-card ai">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="stat-number" id="aiCount">0</div>
+                        <div class="stat-label">AI-generated images</div>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-section">
+                    <h2><i class="fas fa-cloud-upload-alt"></i> Upload Training Images</h2>
+                    <div class="upload-cards">
+                        <div class="upload-card real">
+                            <div class="upload-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <h3>Add Real Images</h3>
+                            <p>Upload human-taken photos</p>
+                            <input type="file" id="realImages" class="file-input" accept="image/*" multiple onchange="handleRealImages(event)">
+                            <button class="upload-btn" onclick="document.getElementById('realImages').click()">
+                                <i class="fas fa-folder-open"></i> Select Images
+                            </button>
+                            <div class="file-list" id="realFileList">
+                                <div class="file-item"><i class="fas fa-info-circle"></i> No files selected</div>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-card ai">
+                            <div class="upload-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>Add AI Images</h3>
+                            <p>Upload AI-generated images</p>
+                            <input type="file" id="aiImages" class="file-input" accept="image/*" multiple onchange="handleAIImages(event)">
+                            <button class="upload-btn" onclick="document.getElementById('aiImages').click()">
+                                <i class="fas fa-folder-open"></i> Select Images
+                            </button>
+                            <div class="file-list" id="aiFileList">
+                                <div class="file-item"><i class="fas fa-info-circle"></i> No files selected</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Section -->
+            <div class="training-section fade-in">
+                <h2><i class="fas fa-rocket"></i> Model Training</h2>
+                <div class="dataset-status">
+                    <p><strong>Dataset Status:</strong> <span id="datasetStatus">Add images to both categories to start training</span></p>
+                    <p id="trainingInfo">
+                        <strong>Training Info:</strong> Your model will learn from <span id="totalImages">0</span> images 
+                        (<span id="realTrainCount">0</span> real, <span id="aiTrainCount">0</span> AI)
+                    </p>
+                </div>
+                
+                <button onclick="startTraining()" class="train-btn" id="trainBtn" disabled>
+                    <i class="fas fa-play"></i> Start Training
+                </button>
+                
+                <div id="trainingProgress" class="training-progress">
+                    <h3><i class="fas fa-cog fa-spin"></i> Training in Progress</h3>
+                    
+                    <!-- Progress Stages -->
+                    <div class="progress-stages">
+                        <div class="progress-stage">
+                            <div class="stage-indicator" id="stage1"></div>
+                            <div class="stage-label" id="stageLabel1">Uploading</div>
+                        </div>
+                        <div class="progress-stage">
+                            <div class="stage-indicator" id="stage2"></div>
+                            <div class="stage-label" id="stageLabel2">Preprocessing</div>
+                        </div>
+                        <div class="progress-stage">
+                            <div class="stage-indicator" id="stage3"></div>
+                            <div class="stage-label" id="stageLabel3">Training</div>
+                        </div>
+                        <div class="progress-stage">
+                            <div class="stage-indicator" id="stage4"></div>
+                            <div class="stage-label" id="stageLabel4">Validation</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar">0%</div>
+                    </div>
+                    
+                    <!-- Progress Info -->
+                    <div class="progress-info">
+                        <span id="progressPercentage">0%</span>
+                        <span id="progressTime">Processing...</span>
+                    </div>
+                    
+                    <!-- Time Estimate -->
+                    <div class="time-estimate" id="timeEstimate">
+                        <strong><i class="fas fa-clock"></i> Time Estimate:</strong> 
+                        <span id="estimateText">Calculating based on your dataset size...</span>
+                    </div>
+                    
+                    <!-- Current Status -->
+                    <p id="progressText">Initializing training process...</p>
+                </div>
+                
+                <div id="trainingResult" class="training-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="brand-section">
+                <div class="brand-name">Analyzer Data Authenticity</div>
+                <div class="brand-tagline">Advanced AI-powered fake detection technology</div>
+            </div>
+            <div class="developer-section">
+                <div class="developer-info">
+                    <div class="developer-logo">S</div>
+                    <div class="developer-text">Developed by <strong>AI&DS dept</strong></div>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/sumaiya-naseer-husen-sarwad-73baa8288/" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/SumaiyaSarwad" class="social-link"><i class="fab fa-github"></i></a>
+                   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sumaiyansarwad06@gmail.com" 
+   target="_blank" 
+   class="social-link">
+   <i class="fas fa-envelope"></i>
+</a>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 AI Unimodel Deepfake Detector. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+        <script>
+        let realImages = [];
+        let aiImages = [];
+        let serverRealCount = 0;
+        let serverAiCount = 0;
+        let progressPollInterval = null;
+
+        // Load existing dataset stats from server
+        loadDatasetStats();
+
+        async function loadDatasetStats() {
+            try {
+                const response = await fetch('/get-dataset-stats');
+                const data = await response.json();
+                
+                if (data.error) {
+                    console.error('Error loading stats:', data.error);
+                    return;
+                }
+                
+                // Store server counts separately
+                serverRealCount = data.real_count;
+                serverAiCount = data.ai_count;
+                
+                // Update display with server counts only
+                updateDisplay();
+                
+                // Enable training if we have images in both categories
+                if (serverRealCount > 0 && serverAiCount > 0) {
+                    document.getElementById('trainBtn').disabled = false;
+                    const statusText = (serverRealCount + serverAiCount) >= 20 ? 
+                        `<span style="color: #4CAF50;">✅ ${serverRealCount + serverAiCount} existing images ready for training</span>` :
+                        `<span style="color: #ff9800;">⚠️ ${serverRealCount + serverAiCount} existing images (more recommended)</span>`;
+                    document.getElementById('datasetStatus').innerHTML = statusText;
+                }
+                
+            } catch (error) {
+                console.error('Error loading dataset stats:', error);
+            }
+        }
+
+        function updateDisplay() {
+            const totalReal = serverRealCount + realImages.length;
+            const totalAi = serverAiCount + aiImages.length;
+            const totalImages = totalReal + totalAi;
+            
+            document.getElementById('realCount').textContent = totalReal;
+            document.getElementById('aiCount').textContent = totalAi;
+            document.getElementById('totalImages').textContent = totalImages;
+            document.getElementById('realTrainCount').textContent = totalReal;
+            document.getElementById('aiTrainCount').textContent = totalAi;
+            
+            if (totalImages > 0) {
+                document.getElementById('trainingInfo').style.display = 'block';
+            }
+            
+            checkTrainingReady();
+        }
+
+        function handleRealImages(event) {
+            const files = Array.from(event.target.files);
+            realImages = realImages.concat(files);
+            updateFileList('realFileList', realImages);
+            updateDisplay();
+        }
+
+        function handleAIImages(event) {
+            const files = Array.from(event.target.files);
+            aiImages = aiImages.concat(files);
+            updateFileList('aiFileList', aiImages);
+            updateDisplay();
+        }
+
+        function updateFileList(elementId, files) {
+            const fileList = document.getElementById(elementId);
+            fileList.innerHTML = files.map(file => 
+                `<div class="file-item">✓ ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)</div>`
+            ).join('');
+        }
+
+        function checkTrainingReady() {
+            const trainBtn = document.getElementById('trainBtn');
+            const datasetStatus = document.getElementById('datasetStatus');
+            
+            const totalReal = serverRealCount + realImages.length;
+            const totalAi = serverAiCount + aiImages.length;
+            
+            if (totalReal >= 10 && totalAi >= 10) {
+                trainBtn.disabled = false;
+                datasetStatus.innerHTML = '<span style="color: #4CAF50;">✅ Ready to train! Good dataset balance</span>';
+            } else if (totalReal > 0 && totalAi > 0) {
+                trainBtn.disabled = false;
+                datasetStatus.innerHTML = '<span style="color: #ff9800;">⚠️ Can train, but more images recommended (10+ each)</span>';
+            } else {
+                trainBtn.disabled = true;
+                datasetStatus.textContent = 'Add images to both categories to start training';
+            }
+        }
+
+        function updateProgressBar(percentage, stage, statusText) {
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            progressPercentage.textContent = percentage + '%';
+            progressText.textContent = statusText;
+            
+            // Update active stage
+            updateActiveStage(stage);
+        }
+
+        function updateActiveStage(stage) {
+            // Reset all stages
+            for (let i = 1; i <= 4; i++) {
+                const indicator = document.getElementById('stage' + i);
+                const label = document.getElementById('stageLabel' + i);
+                
+                indicator.classList.remove('active', 'completed');
+                label.classList.remove('active');
+                
+                if (i < stage) {
+                    indicator.classList.add('completed');
+                } else if (i === stage) {
+                    indicator.classList.add('active');
+                    label.classList.add('active');
+                }
+            }
+        }
+
+        function pollTrainingProgress() {
+            progressPollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/get-training-status');
+                    const progressData = await response.json();
+                    
+                    updateRealProgress(progressData);
+                    
+                    // Stop polling when training is complete or errored
+                    if (progressData.current >= 100 || progressData.error) {
+                        clearInterval(progressPollInterval);
+                        if (progressData.current >= 100) {
+                            completeTraining(progressData);
+                        } else if (progressData.error) {
+                            showTrainingError(progressData.message);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Progress polling error:', error);
+                    clearInterval(progressPollInterval);
+                    showTrainingError(`Failed to get training progress: ${error.message}`);
+                }
+            }, 2000); // Poll every 2 seconds
+        }
+
+        function updateRealProgress(progressData) {
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const progressText = document.getElementById('progressText');
+            const timeEstimate = document.getElementById('estimateText');
+            const progressTime = document.getElementById('progressTime');
+            
+            // Update progress bar
+            const percentage = Math.min(100, Math.max(0, progressData.current));
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            progressPercentage.textContent = percentage + '%';
+            progressText.textContent = progressData.message;
+            
+            // Update stage based on progress
+            let stage = 1;
+            if (percentage >= 30) stage = 2;
+            if (percentage >= 50) stage = 3;
+            if (percentage >= 95) stage = 4;
+            
+            updateActiveStage(stage);
+            
+            // Update time estimate based on stage
+            if (progressData.stage === 'training' && progressData.epoch && progressData.total_epochs) {
+                timeEstimate.textContent = `Epoch ${progressData.epoch}/${progressData.total_epochs} - Accuracy: ${(progressData.accuracy * 100).toFixed(1)}%`;
+                progressTime.textContent = `Epoch ${progressData.epoch}/${progressData.total_epochs}`;
+            } else {
+                timeEstimate.textContent = progressData.message;
+                progressTime.textContent = progressData.stage;
+            }
+        }
+
+        function completeTraining(progressData) {
+            const trainBtn = document.getElementById('trainBtn');
+            const progressDiv = document.getElementById('trainingProgress');
+            const resultDiv = document.getElementById('trainingResult');
+            
+            setTimeout(() => {
+                if (progressData.stage === 'completed') {
+                    resultDiv.innerHTML = `
+                        <div class="result-card human-result">
+                            <h3>✅ Training Successful!</h3>
+                            <p><strong>Accuracy:</strong> ${(parseFloat(progressData.accuracy) * 100).toFixed(2)}%</p>
+                            <p>${progressData.message}</p>
+                            <p>You can now use the image detection feature!</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result-card ai-result">
+                            <h3>❌ Training Failed</h3>
+                            <p>${progressData.message}</p>
+                            <p>Please check your images and try again.</p>
+                        </div>
+                    `;
+                }
+                
+                resultDiv.style.display = 'block';
+                progressDiv.style.display = 'none';
+                trainBtn.disabled = false;
+                trainBtn.textContent = '🚀 Start Training';
+                
+                // Clear uploaded files and reload fresh stats
+                resetClientCounts();
+            }, 1000);
+        }
+
+        function showTrainingError(message) {
+            const trainBtn = document.getElementById('trainBtn');
+            const progressDiv = document.getElementById('trainingProgress');
+            const resultDiv = document.getElementById('trainingResult');
+            
+            resultDiv.innerHTML = `
+                <div class="result-card ai-result">
+                    <h3>❌ Training Error</h3>
+                    <p>${message}</p>
+                    <p>Please try again or check the server logs.</p>
+                </div>
+            `;
+            resultDiv.style.display = 'block';
+            progressDiv.style.display = 'none';
+            trainBtn.disabled = false;
+            trainBtn.textContent = '🚀 Start Training';
+        }
+
+        async function startTraining() {
+    const totalReal = serverRealCount + realImages.length;
+    const totalAi = serverAiCount + aiImages.length;
+    
+    if (totalReal === 0 || totalAi === 0) {
+        alert('Please add images to both categories before training');
+        return;
+    }
+    
+    const trainBtn = document.getElementById('trainBtn');
+    const progressDiv = document.getElementById('trainingProgress');
+    const resultDiv = document.getElementById('trainingResult');
+    
+    // Reset UI
+    trainBtn.disabled = true;
+    trainBtn.textContent = '⏳ Training...';
+    progressDiv.style.display = 'block';
+    resultDiv.style.display = 'none';
+    
+    // Clear any existing polling
+    if (progressPollInterval) {
+        clearInterval(progressPollInterval);
+    }
+    
+    // Initialize progress
+    updateProgressBar(0, 1, 'Starting training process...');
+    
+    try {
+        // First upload any new images
+        if (realImages.length > 0 || aiImages.length > 0) {
+            updateProgressBar(5, 1, 'Uploading new images...');
+            await uploadImagesToServer();
+        }
+        
+        // Start real training with progress polling
+        updateProgressBar(10, 1, 'Initializing training...');
+        
+        // FIX: Send proper JSON data
+        const response = await fetch('/start-training', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                use_only_new: true  // This enables smart training
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'started') {
+            // Start polling for progress
+            pollTrainingProgress();
+        } else {
+            throw new Error(data.message || 'Failed to start training');
+        }
+        
+    } catch (error) {
+        console.error('Training error:', error);
+        showTrainingError(`An error occurred: ${error.message}`);
+    }
+}
+
+        async function uploadImagesToServer() {
+    const totalImages = realImages.length + aiImages.length;
+    let uploadedCount = 0;
+    
+    // Upload real images to datasetstrain
+    for (let i = 0; i < realImages.length; i++) {
+        const formData = new FormData();
+        formData.append('image', realImages[i]);
+        formData.append('category', 'real');
+        
+        const response = await fetch('/upload-training-image', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to upload real image');
+        }
+        
+        uploadedCount++;
+        const progress = 5 + (uploadedCount / totalImages) * 5; // 5-10% for uploads
+        updateProgressBar(Math.round(progress), 1, `Uploading images to datasetstrain... (${uploadedCount}/${totalImages})`);
+    }
+    
+    // Upload AI images to datasetstrain
+    for (let i = 0; i < aiImages.length; i++) {
+        const formData = new FormData();
+        formData.append('image', aiImages[i]);
+        formData.append('category', 'ai');
+        
+        const response = await fetch('/upload-training-image', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to upload AI image');
+        }
+        
+        uploadedCount++;
+        const progress = 5 + (uploadedCount / totalImages) * 5; // 5-10% for uploads
+        updateProgressBar(Math.round(progress), 1, `Uploading images to datasetstrain... (${uploadedCount}/${totalImages})`);
+    }
+}
+
+        function resetClientCounts() {
+            realImages = [];
+            aiImages = [];
+            updateFileList('realFileList', []);
+            updateFileList('aiFileList', []);
+            
+            // Reload fresh stats from server
+            loadDatasetStats();
+        }
+    </script>
+</body>
+</html>

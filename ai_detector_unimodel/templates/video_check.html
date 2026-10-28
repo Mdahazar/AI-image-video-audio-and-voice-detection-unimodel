@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Check - AI Video Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #9c27b0;
+            --accent-dark: #8e24aa;
+            --red: #f44336;
+            --green: #4CAF50;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Enhanced Professional Footer */
+footer {
+    background: #1a202c;
+    color: white;
+    padding: 2.5rem 0 1.5rem;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}
+
+.brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.brand-tagline {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+.developer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .developer-section {
+        align-items: center;
+    }
+}
+
+.developer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.developer-info:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.developer-logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.developer-text {
+    font-size: 0.95rem;
+    color: #a0aec0;
+}
+
+.developer-text strong {
+    color: white;
+    font-weight: 700;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    color: #a0aec0;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.social-link:hover {
+    color: white;
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2d3748;
+    color: #a0aec0;
+    font-size: 0.85rem;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Main Content */
+        .analysis-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Upload Section */
+        .upload-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 2px dashed var(--accent);
+            text-align: center;
+        }
+
+        .upload-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .upload-area {
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+        }
+
+        .upload-area:hover {
+            background: #f3e5f5;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .file-info {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* Video Preview */
+        .video-preview {
+            max-width: 500px;
+            max-height: 300px;
+            margin: 20px auto;
+            display: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .video-preview.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Check Button */
+        .check-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        }
+
+        .check-btn:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        .check-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Results Section */
+        .result-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f1f3f4;
+            padding-bottom: 1rem;
+        }
+
+        .result-header h2 {
+            color: var(--dark);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-card {
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+        }
+
+        .ai-result {
+            border-left-color: var(--red);
+            background: #ffebee;
+        }
+
+        .real-result {
+            border-left-color: var(--green);
+            background: #e8f5e8;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .confidence {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Video Info */
+        .video-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            border: 1px solid #e9ecef;
+        }
+
+        .video-info h4 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        /* Details List */
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .details-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            color: #555;
+        }
+
+        .details-list li:before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Technical Analysis */
+        .technical-analysis {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-top: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .technical-analysis h4 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .analysis-item {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+
+        .analysis-label {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .analysis-value {
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        /* Loading States */
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .loading.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        .loading p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Error Section */
+        .error-section {
+            background: #ffeaea;
+            border: 1px solid #f8d7da;
+            color: #721c24;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            display: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .error-section.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Info Section */
+        .info-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .info-section h3 {
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section p {
+            color: var(--gray);
+            margin-top: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            color: var(--light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .info-grid, .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 1rem;
+            }
+            
+            .video-preview {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="fade-in">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h1>Video Authenticity Check</h1>
+                <p class="tagline">Upload a video to check if it's real or AI-generated</p>
+                <a href="/" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="analysis-container">
+            <div class="upload-container fade-in">
+                <div class="upload-area" onclick="document.getElementById('videoInput').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-video"></i>
+                    </div>
+                    <h3>Upload Video File</h3>
+                    <p>Click to select a video file (MP4, AVI, MOV, WMV)</p>
+                    <p class="file-info">Max size: 100MB | Max duration: 5 minutes</p>
+                </div>
+                
+                <input type="file" id="videoInput" accept="video/*" style="display: none;" onchange="handleVideoSelect(event)">
+                
+                <video id="videoPreview" class="video-preview" controls></video>
+                
+                <button id="checkBtn" onclick="checkVideo()" class="check-btn" disabled>
+                    <i class="fas fa-search"></i> Check Real or AI Generated
+                </button>
+            </div>
+            
+            <div id="resultSection" class="result-section">
+                <div class="result-header">
+                    <h2><i class="fas fa-chart-bar"></i> Video Analysis Result</h2>
+                </div>
+                <div id="resultContent">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Analyzing video frames for AI generation patterns...</p>
+                <p><small>This may take a few minutes depending on video length</small></p>
+            </div>
+            
+            <div id="errorSection" class="error-section"></div>
+            
+            <div class="info-section fade-in">
+                <h3><i class="fas fa-lightbulb"></i> What we detect in videos:</h3>
+                <ul class="details-list">
+                    <li><i class="fas fa-robot"></i> AI generation artifacts in frames</li>
+                    <li><i class="fas fa-theater-masks"></i> Unnatural facial movements and expressions</li>
+                    <li><i class="fas fa-wave-square"></i> Inconsistent motion patterns</li>
+                    <li><i class="fas fa-palette"></i> Texture and lighting anomalies</li>
+                    <li><i class="fas fa-exclamation-triangle"></i> Signs of video manipulation and deepfakes</li>
+                    <li><i class="fas fa-film"></i> Frame-by-frame analysis for inconsistencies</li>
+                </ul>
+                <p><strong>Use case:</strong> Detect deepfake videos, AI-generated content, manipulated media for scams or misinformation.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="brand-section">
+                <div class="brand-name">Analyzer Data Authenticity</div>
+                <div class="brand-tagline">Advanced AI-powered fake detection technology</div>
+            </div>
+            <div class="developer-section">
+                <div class="developer-info">
+                    <div class="developer-logo">S</div>
+                    <div class="developer-text">Developed by <strong>AI&DS dept</strong></div>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/sumaiya-naseer-husen-sarwad-73baa8288/" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/SumaiyaSarwad" class="social-link"><i class="fab fa-github"></i></a>
+                   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sumaiyansarwad06@gmail.com" 
+   target="_blank" 
+   class="social-link">
+   <i class="fas fa-envelope"></i>
+</a>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 AI Unimodel Deepfake Detector. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        let selectedVideoFile = null;
+        
+        function handleVideoSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validate file type
+                if (!file.type.match('video.*')) {
+                    showError('Please select a valid video file (MP4, AVI, MOV, WMV)');
+                    return;
+                }
+                
+                // Validate file size (100MB)
+                if (file.size > 100 * 1024 * 1024) {
+                    showError('File size too large. Maximum size is 100MB.');
+                    return;
+                }
+                
+                selectedVideoFile = file;
+                
+                // Show preview
+                const preview = document.getElementById('videoPreview');
+                const url = URL.createObjectURL(file);
+                preview.src = url;
+                preview.style.display = 'block';
+                
+                // Enable check button
+                document.getElementById('checkBtn').disabled = false;
+                
+                hideError();
+                hideResults();
+            }
+        }
+        
+        function checkVideo() {
+            if (!selectedVideoFile) {
+                showError('Please select a video first');
+                return;
+            }
+            
+            showLoading();
+            hideResults();
+            hideError();
+            
+            const checkBtn = document.getElementById('checkBtn');
+            checkBtn.disabled = true;
+            checkBtn.textContent = '🔍 Analyzing Video...';
+            
+            const formData = new FormData();
+            formData.append('video', selectedVideoFile);
+            
+            fetch('/check-video', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network error occurred');
+                }
+                return response.json();
+            })
+            .then(data => {
+                hideLoading();
+                
+                checkBtn.disabled = false;
+                checkBtn.textContent = '🔍 Check Real or AI Generated';
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showVideoResult(data);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                
+                checkBtn.disabled = false;
+                checkBtn.textContent = '🔍 Check Real or AI Generated';
+                
+                showError('Connection error. Please try again.');
+                console.error('Error:', error);
+            });
+        }
+        
+        function showVideoResult(data) {
+            const resultSection = document.getElementById('resultSection');
+            const resultContent = document.getElementById('resultContent');
+            
+            const isAI = data.result.includes('AI');
+            const icon = isAI ? '🤖' : '✅';
+            const resultClass = isAI ? 'ai-result' : 'real-result';
+            const color = isAI ? '#f44336' : '#4CAF50';
+            
+            resultContent.innerHTML = `
+                <div class="result-card ${resultClass}">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">${icon}</div>
+                        <h3 style="color: ${color}; font-size: 2em; margin: 0;">${data.result}</h3>
+                        <p style="color: #666; margin: 5px 0;">Confidence: ${data.confidence}</p>
+                    </div>
+                    
+                    ${data.video_info ? `
+                        <div class="video-info">
+                            <h4>Video Information:</h4>
+                            <p><strong>Duration:</strong> ${data.video_info.duration || 'N/A'}</p>
+                            <p><strong>Frames Analyzed:</strong> ${data.video_info.frames_analyzed || 'N/A'}</p>
+                            <p><strong>Resolution:</strong> ${data.video_info.resolution || 'N/A'}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${data.details && data.details.length > 0 ? `
+                        <h4>Analysis Details:</h4>
+                        <ul class="details-list">
+                            ${data.details.map(detail => `<li>${detail}</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                    
+                    ${data.analysis ? `
+                        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 5px;">
+                            <h4>Technical Analysis:</h4>
+                            <p>AI Detection Score: ${data.analysis.ai_score || 'N/A'}</p>
+                            <p>Frame Consistency: ${data.analysis.frame_consistency || 'N/A'}</p>
+                            <p>Motion Analysis: ${data.analysis.motion_analysis || 'N/A'}</p>
+                            <p>Artifact Detection: ${data.analysis.artifact_detection || 'N/A'}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            resultSection.style.display = 'block';
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        function showError(message) {
+            const errorSection = document.getElementById('errorSection');
+            errorSection.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5em;">⚠️</span>
+                    <div>
+                        <strong>Error:</strong> ${message}
+                    </div>
+                </div>
+            `;
+            errorSection.style.display = 'block';
+        }
+        
+        function hideError() {
+            const errorSection = document.getElementById('errorSection');
+            errorSection.style.display = 'none';
+        }
+        
+        function hideResults() {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

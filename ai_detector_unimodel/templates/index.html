@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Human Detector | Advanced Content Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2d3748;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0 2rem;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: pulse 3s infinite;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+            font-weight: 400;
+            line-height: 1.7;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+            align-items: start;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Info Card with Enhanced Animation */
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card h2 {
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .info-card h2 i {
+            font-size: 1.4rem;
+            color: #667eea;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card li:hover {
+            transform: translateX(8px);
+            color: #667eea;
+        }
+
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+
+        .info-card li i {
+            color: #667eea;
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Action Section */
+        .action-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .action-header {
+            text-align: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .action-header h2 {
+            font-size: 1.6rem;
+            color: #1a202c;
+            margin-bottom: 0.4rem;
+            font-weight: 700;
+        }
+
+        .action-header p {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Enhanced Button Styles with Premium Animations */
+        .analyze-btn {
+            background: white;
+            color: #2d3748;
+            border: none;
+            padding: 1.5rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
+        }
+
+        .analyze-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .analyze-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        /* Hover Effects */
+        .analyze-btn:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .analyze-btn:hover::before {
+            transform: scaleX(1);
+        }
+
+        .analyze-btn:hover::after {
+            opacity: 1;
+        }
+
+        /* Click Effects */
+        .analyze-btn:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.1s ease;
+        }
+
+        /* Ripple Effect */
+        .analyze-btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .btn-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+        }
+
+        .analyze-btn:hover .btn-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .btn-text {
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-desc {
+            font-size: 0.85rem;
+            color: #718096;
+            font-weight: 400;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .analyze-btn:hover .btn-desc {
+            color: #4a5568;
+        }
+
+        .analyze-btn:nth-child(1) .btn-icon { color: #667eea; }
+        .analyze-btn:nth-child(2) .btn-icon { color: #764ba2; }
+        .analyze-btn:nth-child(3) .btn-icon { color: #ff6b6b; }
+        .analyze-btn:nth-child(4) .btn-icon { color: #4ecdc4; }
+        .analyze-btn:nth-child(5) .btn-icon { color: #45b7d1; }
+
+        .train-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .train-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .train-btn:hover::before {
+            left: 100%;
+        }
+
+        .train-btn .btn-icon,
+        .train-btn .btn-text,
+        .train-btn .btn-desc {
+            color: white;
+        }
+
+        .train-btn:hover .btn-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        /* Features Section with Enhanced Animations */
+        .features-section {
+            margin: 3rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            color: #1a202c;
+            font-size: 2rem;
+            font-weight: 800;
+            position: relative;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 968px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 14px;
+            padding: 1.8rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateZ(0);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            color: #667eea;
+            height: 60px;
+            width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(102, 126, 234, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            background-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.8rem;
+            color: #1a202c;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: #4a5568;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Stats Section with Enhanced Animations */
+        .stats-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            border-radius: 16px;
+            margin: 3rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            transform: translateZ(0);
+        }
+
+        .stats-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.6rem;
+            font-weight: 800;
+        }
+
+        .stat-item p {
+            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Enhanced Professional Footer */
+        footer {
+            background: #1a202c;
+            color: white;
+            padding: 2.5rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .brand-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-tagline {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        .developer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .developer-section {
+                align-items: center;
+            }
+        }
+
+        .developer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .developer-info:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .developer-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .developer-text {
+            font-size: 0.95rem;
+            color: #a0aec0;
+        }
+
+        .developer-text strong {
+            color: white;
+            font-weight: 700;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            color: #a0aec0;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .social-link:hover {
+            color: white;
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #2d3748;
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 480px;
+            text-align: center;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px) scale(0.95);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .close {
+            color: #a0aec0;
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+
+        .close:hover {
+            color: #2d3748;
+            transform: scale(1.1);
+        }
+
+        .training-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .training-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .training-option-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1.1rem;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .training-option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .training-option-btn:hover::before {
+            left: 100%;
+        }
+
+        .training-option-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .slide-in-left {
+            animation: slideInLeft 0.7s ease-out forwards;
+            opacity: 0;
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.7s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .info-card, .feature-card {
+                padding: 1.8rem 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                gap: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 0.95rem;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .info-card, .feature-card {
+                padding: 1.5rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="fade-in">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h1>AI Unimodel Deepfake Detector</h1>
+                <p class="tagline">Advanced detection technology to identify AI-generated content across text, images, videos, and audio with unparalleled accuracy</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="info-card slide-in-left">
+                <h2><i class="fas fa-info-circle"></i> How It Works</h2>
+                <ul>
+                    <li><i class="fas fa-search"></i> Analyzes writing patterns and linguistic structures</li>
+                    <li><i class="fas fa-brain"></i> Detects AI-specific language models and generation patterns</li>
+                    <li><i class="fas fa-user"></i> Identifies human conversational markers and emotional cues</li>
+                    <li><i class="fas fa-file-image"></i> Examines visual artifacts in images and videos</li>
+                    <li><i class="fas fa-wave-square"></i> Analyzes audio patterns for synthetic generation</li>
+                    <li><i class="fas fa-chart-line"></i> Provides confidence scores for accurate detection</li>
+                </ul>
+            </div>
+            
+            <div class="action-section slide-in-right">
+                <div class="action-header">
+                    <h2>Content Analysis</h2>
+                    <p>Select the type of content you want to analyze</p>
+                </div>
+                
+                <div class="action-grid">
+                    <button onclick="startAnalysis()" class="analyze-btn fade-in delay-1">
+                        <i class="fas fa-file-alt btn-icon"></i> 
+                        <div class="btn-text">Analyze Text</div>
+                        <div class="btn-desc">Detect AI-generated text content</div>
+                    </button>
+                    <button onclick="checkImage()" class="analyze-btn fade-in delay-2">
+                        <i class="fas fa-image btn-icon"></i>
+                        <div class="btn-text">Check Image</div>
+                        <div class="btn-desc">Identify AI-generated images</div>
+                    </button>
+                    <button onclick="checkVideo()" class="analyze-btn fade-in delay-3">
+                        <i class="fas fa-video btn-icon"></i>
+                        <div class="btn-text">Check Video</div>
+                        <div class="btn-desc">Detect synthetic video content</div>
+                    </button>
+                    <button onclick="checkAudio()" class="analyze-btn fade-in delay-4">
+                        <i class="fas fa-music btn-icon"></i>
+                        <div class="btn-text">Check Audio</div>
+                        <div class="btn-desc">Identify AI-generated audio</div>
+                    </button>
+                    <button onclick="showTrainingOptions()" class="analyze-btn train-btn fade-in">
+                        <i class="fas fa-graduation-cap btn-icon"></i>
+                        <div class="btn-text">Train AI Model</div>
+                        <div class="btn-desc">Improve detection accuracy</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2 class="section-title">Why Choose Our Detector?</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Get results in seconds with our optimized detection algorithms and parallel processing capabilities</p>
+                </div>
+                <div class="feature-card fade-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Highly Accurate</h3>
+                    <p>Our advanced models achieve over 98% accuracy in detecting the latest AI-generated content</p>
+                </div>
+                <div class="feature-card fade-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h3>Continuous Updates</h3>
+                    <p>Regularly updated to detect the latest AI generation models and emerging synthetic media techniques</p>
+                </div>
+                <div class="feature-card fade-in delay-3">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>Privacy Focused</h3>
+                    <p>Your data is encrypted, never stored or shared with third parties, ensuring complete confidentiality</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item fade-in">
+                    <h3>500K+</h3>
+                    <p>Content Analyses</p>
+                </div>
+                <div class="stat-item fade-in delay-1">
+                    <h3>98.2%</h3>
+                    <p>Accuracy Rate</p>
+                </div>
+                <div class="stat-item fade-in delay-2">
+                    <h3>50+</h3>
+                    <p>AI Models Detected</p>
+                </div>
+                <div class="stat-item fade-in delay-3">
+                    <h3>24/7</h3>
+                    <p>Available Service</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Training Options Modal -->
+    <div id="trainingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTrainingModal()">&times;</span>
+            <h2>Choose Training Type</h2>
+            <p>Select the type of model you want to train for improved detection accuracy</p>
+            <div class="training-options">
+                <button onclick="trainImageModel()" class="training-option-btn">
+                    <i class="fas fa-image"></i> 
+                    <span>Image Model</span>
+                </button>
+                <button onclick="trainVideoModel()" class="training-option-btn">
+                    <i class="fas fa-video"></i> 
+                    <span>Video Model</span>
+                </button>
+                <button onclick="trainAudioModel()" class="training-option-btn">
+                    <i class="fas fa-music"></i> 
+                    <span>Audio Model</span>
+                </button>
+                <button onclick="trainTextModel()" class="training-option-btn">
+                    <i class="fas fa-keyboard"></i> 
+                    <span>Text Model</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="brand-section">
+                <div class="brand-name">Analyzer Data Authenticity</div>
+                <div class="brand-tagline">Advanced AI-powered fake detection technology</div>
+            </div>
+            <div class="developer-section">
+                <div class="developer-info">
+                    <div class="developer-logo">S</div>
+                    <div class="developer-text">Developed by <strong>AI&DS dept</strong></div>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/sumaiya-naseer-husen-sarwad-73baa8288/" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/SumaiyaSarwad" class="social-link"><i class="fab fa-github"></i></a>
+                   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sumaiyansarwad06@gmail.com" 
+   target="_blank" 
+   class="social-link">
+   <i class="fas fa-envelope"></i>
+</a>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 AI Unimodel Deepfake Detector. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        // Your existing JavaScript functions
+        function startAnalysis() {
+            window.location.href = '/analyze';
+        }
+        
+        function checkImage() {
+            window.location.href = '/image-check';
+        }
+        
+        function checkVideo() {
+            window.location.href = '/video-check';
+        }
+        
+        function checkAudio() {
+            window.location.href = '/audio-check';
+        }
+        
+        function showTrainingOptions() {
+            document.getElementById('trainingModal').classList.add('active');
+        }
+        
+        function closeTrainingModal() {
+            document.getElementById('trainingModal').classList.remove('active');
+        }
+        
+        function trainImageModel() {
+            window.location.href = '/train-model';
+        }
+        
+        function trainVideoModel() {
+            window.location.href = '/train-video-model';
+        }
+        
+        function trainAudioModel() {
+            window.location.href = '/train-audio-model';
+        }
+        
+        function trainTextModel() {
+            window.location.href = '/train-text-model';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('trainingModal');
+            if (event.target === modal) {
+                closeTrainingModal();
+            }
+        }
+
+        // Add animation to elements when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animatedElements.forEach(element => {
+                // Set animation to paused initially
+                element.style.animationPlayState = 'paused';
+                observer.observe(element);
+            });
+            
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.analyze-btn, .training-option-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = button.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

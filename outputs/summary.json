@@ -1,0 +1,7 @@
+{
+  "accuracy": 0.982,
+  "precision_weighted": 0.9820694179961914,
+  "recall_weighted": 0.982,
+  "f1_weighted": 0.9819993519766712,
+  "model_used": "ai_detector_unimodel\\models\\ai_image_detector.h5"
+}

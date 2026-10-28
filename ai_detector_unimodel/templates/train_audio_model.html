@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Audio Model - AI Audio Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #ff9800;
+            --accent-dark: #f57c00;
+            --red: #f44336;
+            --green: #4CAF50;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        /* Enhanced Professional Footer */
+footer {
+    background: #1a202c;
+    color: white;
+    padding: 2.5rem 0 1.5rem;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}
+
+.brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.brand-tagline {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+.developer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .developer-section {
+        align-items: center;
+    }
+}
+
+.developer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.developer-info:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.developer-logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+.developer-text {
+    font-size: 0.95rem;
+    color: #a0aec0;
+}
+
+.developer-text strong {
+    color: white;
+    font-weight: 700;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    color: #a0aec0;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.social-link:hover {
+    color: white;
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.copyright {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2d3748;
+    color: #a0aec0;
+    font-size: 0.85rem;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Main Content */
+        .training-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            border-left: 4px solid;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.real {
+            border-left-color: var(--green);
+        }
+
+        .stat-card.ai {
+            border-left-color: var(--red);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .stat-card.real .stat-number {
+            color: var(--green);
+        }
+
+        .stat-card.ai .stat-number {
+            color: var(--red);
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .upload-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .upload-card {
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border: 2px dashed #ddd;
+            text-align: center;
+            transition: var(--transition);
+            background: #f8f9fa;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .upload-card.real:hover {
+            border-color: var(--green);
+            background: #f0f9f0;
+        }
+
+        .upload-card.ai:hover {
+            border-color: var(--red);
+            background: #fef0f0;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-card.real .upload-icon {
+            color: var(--green);
+        }
+
+        .upload-card.ai .upload-icon {
+            color: var(--red);
+        }
+
+        .upload-card h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .upload-card p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .upload-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .file-list {
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            border: 1px solid #f1f3f4;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            background: white;
+        }
+
+        .file-item {
+            padding: 8px;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item i {
+            color: var(--green);
+            font-size: 0.8rem;
+        }
+
+        /* Training Section */
+        .training-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .training-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .training-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .dataset-status {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: #f8f9fa;
+        }
+
+        .train-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 1.5rem 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .train-btn:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .train-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Training Progress */
+        .training-progress {
+            display: none;
+            margin: 2rem 0;
+        }
+
+        .training-progress.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #f0f0f0;
+            border-radius: 50px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            height: 25px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Training Result */
+        .training-result {
+            display: none;
+            margin: 2rem 0;
+        }
+
+        .training-result.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-card {
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid;
+        }
+
+        .success-result {
+            border-left-color: var(--green);
+            background: #e8f5e8;
+        }
+
+        .error-result {
+            border-left-color: var(--red);
+            background: #ffebee;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            color: var(--light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-card, .stat-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="fade-in">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h1>Train Audio Detector Model</h1>
+                <p class="tagline">Upload training audio files and build your custom AI detection model</p>
+                <a href="/" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="training-container">
+            <!-- Dashboard Section -->
+            <div class="dashboard-section fade-in">
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="stat-card real">
+                        <div class="stat-icon">
+                            <i class="fas fa-microphone-alt"></i>
+                        </div>
+                        <div class="stat-number" id="realCount">2250</div>
+                        <div class="stat-label">Human-recorded audio files</div>
+                    </div>
+                    <div class="stat-card ai">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="stat-number" id="aiCount">2250</div>
+                        <div class="stat-label">AI-generated audio files</div>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-section">
+                    <h2><i class="fas fa-cloud-upload-alt"></i> Upload Training Audio</h2>
+                    <div class="upload-cards">
+                        <div class="upload-card real">
+                            <div class="upload-icon">
+                                <i class="fas fa-microphone-alt"></i>
+                            </div>
+                            <h3>Add Real Audio</h3>
+                            <p>Upload human-recorded audio files</p>
+                            <input type="file" id="realAudio" class="file-input" accept="audio/*" multiple onchange="handleRealAudio(event)">
+                            <button class="upload-btn" onclick="document.getElementById('realAudio').click()">
+                                <i class="fas fa-folder-open"></i> Select Files
+                            </button>
+                            <div class="file-list" id="realFileList">
+                                <div class="file-item"><i class="fas fa-info-circle"></i> No files selected</div>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-card ai">
+                            <div class="upload-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>Add AI Audio</h3>
+                            <p>Upload AI-generated audio files</p>
+                            <input type="file" id="aiAudio" class="file-input" accept="audio/*" multiple onchange="handleAIAudio(event)">
+                            <button class="upload-btn" onclick="document.getElementById('aiAudio').click()">
+                                <i class="fas fa-folder-open"></i> Select Files
+                            </button>
+                            <div class="file-list" id="aiFileList">
+                                <div class="file-item"><i class="fas fa-info-circle"></i> No files selected</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Section -->
+            <div class="training-section fade-in">
+                <h2><i class="fas fa-rocket"></i> Model Training</h2>
+                <div class="dataset-status">
+                    <p><strong>Dataset Status:</strong> <span id="datasetStatus">Ready to train with balanced dataset</span></p>
+                    <p id="trainingInfo">
+                        <strong>Training Info:</strong> Your model will learn from <span id="totalAudio">4500</span> audio files 
+                        (<span id="realTrainCount">2250</span> real, <span id="aiTrainCount">2250</span> AI)
+                    </p>
+                </div>
+                
+                <button onclick="startAudioTraining()" class="train-btn" id="trainBtn">
+                    <i class="fas fa-play"></i> Start Training
+                </button>
+                
+                <div id="trainingProgress" class="training-progress">
+                    <h3><i class="fas fa-cog fa-spin"></i> Training in Progress</h3>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar">0%</div>
+                    </div>
+                    
+                    <div class="progress-info">
+                        <span id="progressPercentage">0%</span>
+                        <span id="progressTime">Processing...</span>
+                    </div>
+                    
+                    <p id="progressText">Initializing training process...</p>
+                </div>
+                
+                <div id="trainingResult" class="training-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="brand-section">
+                <div class="brand-name">Analyzer Data Authenticity</div>
+                <div class="brand-tagline">Advanced AI-powered fake detection technology</div>
+            </div>
+            <div class="developer-section">
+                <div class="developer-info">
+                    <div class="developer-logo">S</div>
+                    <div class="developer-text">Developed by <strong>AI&DS dept</strong></div>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/sumaiya-naseer-husen-sarwad-73baa8288/" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/SumaiyaSarwad" class="social-link"><i class="fab fa-github"></i></a>
+                   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sumaiyansarwad06@gmail.com" 
+   target="_blank" 
+   class="social-link">
+   <i class="fas fa-envelope"></i>
+</a>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 AI Unimodel Deepfake Detector. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <script>
+    let realAudioFiles = [];
+    let aiAudioFiles = [];
+    let serverRealCount = 0;
+    let serverAiCount = 0;
+    let audioTrainingInterval = null;
+
+    // Load existing audio dataset stats from server
+    loadAudioDatasetStats();
+
+    // Add this function to get datasetstrain stats
+    async function loadAudioDatasetstrainStats() {
+        try {
+            const response = await fetch('/get-audio-datasetstrain-stats');
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error('Error loading datasetstrain stats:', data.error);
+                return { real_count: 0, ai_count: 0 };
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Error loading datasetstrain stats:', error);
+            return { real_count: 0, ai_count: 0 };
+        }
+    }
+
+    async function loadAudioDatasetStats() {
+        try {
+            const response = await fetch('/get-audio-dataset-stats');
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error('Error loading audio stats:', data.error);
+                return;
+            }
+            
+            // Store server counts separately (from datasets folder)
+            serverRealCount = data.real_count;
+            serverAiCount = data.ai_count;
+            
+            // Update display with server counts (only datasets folder)
+            updateAudioDisplay();
+            
+            // Check training readiness based on new files in datasetstrain
+            await checkAudioTrainingReady();
+            
+        } catch (error) {
+            console.error('Error loading audio dataset stats:', error);
+        }
+    }
+
+    function updateAudioDisplay() {
+        // Only show counts from datasets folder (already trained data)
+        const totalReal = serverRealCount;
+        const totalAi = serverAiCount;
+        const totalAudio = totalReal + totalAi;
+        
+        document.getElementById('realCount').textContent = totalReal;
+        document.getElementById('aiCount').textContent = totalAi;
+        document.getElementById('totalAudio').textContent = totalAudio;
+        document.getElementById('realTrainCount').textContent = totalReal;
+        document.getElementById('aiTrainCount').textContent = totalAi;
+        
+        if (totalAudio > 0) {
+            document.getElementById('trainingInfo').style.display = 'block';
+        }
+    }
+
+    async function checkAudioTrainingReady() {
+        const trainBtn = document.getElementById('trainBtn');
+        const datasetStatus = document.getElementById('datasetStatus');
+        
+        // Check for new files in datasetstrain and currently selected files
+        const datasetstrainStats = await loadAudioDatasetstrainStats();
+        const newRealCount = datasetstrainStats.real_count + realAudioFiles.length;
+        const newAiCount = datasetstrainStats.ai_count + aiAudioFiles.length;
+        
+        if (newRealCount >= 5 && newAiCount >= 5) {
+            trainBtn.disabled = false;
+            datasetStatus.innerHTML = `<span style="color: #4CAF50;">✅ Ready to train! ${newRealCount} new real + ${newAiCount} new AI audio files</span>`;
+        } else if (newRealCount > 0 && newAiCount > 0) {
+            trainBtn.disabled = false;
+            datasetStatus.innerHTML = `<span style="color: #ff9800;">⚠️ Can train, but more audio files recommended (5+ each). ${newRealCount} new real + ${newAiCount} new AI</span>`;
+        } else {
+            trainBtn.disabled = true;
+            datasetStatus.textContent = 'Add audio files to both categories to start training';
+        }
+    }
+
+    function handleRealAudio(event) {
+        const files = Array.from(event.target.files);
+        realAudioFiles = realAudioFiles.concat(files);
+        updateAudioFileList('realFileList', realAudioFiles);
+        checkAudioTrainingReady();
+    }
+
+    function handleAIAudio(event) {
+        const files = Array.from(event.target.files);
+        aiAudioFiles = aiAudioFiles.concat(files);
+        updateAudioFileList('aiFileList', aiAudioFiles);
+        checkAudioTrainingReady();
+    }
+
+    function updateAudioFileList(elementId, files) {
+        const fileList = document.getElementById(elementId);
+        fileList.innerHTML = files.map(file => 
+            `<div class="file-item">✓ ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)</div>`
+        ).join('');
+    }
+
+    function updateAudioProgress(percentage, statusText) {
+        const progressBar = document.getElementById('progressBar');
+        const progressPercentage = document.getElementById('progressPercentage');
+        const progressText = document.getElementById('progressText');
+        
+        progressBar.style.width = percentage + '%';
+        progressBar.textContent = percentage + '%';
+        progressPercentage.textContent = percentage + '%';
+        progressText.textContent = statusText;
+    }
+
+    async function startAudioTraining() {
+        // Check for new files in datasetstrain and currently selected files
+        const datasetstrainStats = await loadAudioDatasetstrainStats();
+        const newRealCount = datasetstrainStats.real_count + realAudioFiles.length;
+        const newAiCount = datasetstrainStats.ai_count + aiAudioFiles.length;
+        
+        if (newRealCount === 0 || newAiCount === 0) {
+            alert('Please add audio files to both categories before training');
+            return;
+        }
+        
+        const trainBtn = document.getElementById('trainBtn');
+        const progressDiv = document.getElementById('trainingProgress');
+        const resultDiv = document.getElementById('trainingResult');
+        
+        // Reset UI
+        trainBtn.disabled = true;
+        trainBtn.textContent = '⏳ Training Audio Model...';
+        progressDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        
+        // Clear any existing polling
+        if (audioTrainingInterval) {
+            clearInterval(audioTrainingInterval);
+        }
+        
+        // Initialize progress
+        updateAudioProgress(0, 'Starting audio training process...');
+        
+        try {
+            // First upload any new audio files
+            if (realAudioFiles.length > 0 || aiAudioFiles.length > 0) {
+                updateAudioProgress(5, 'Uploading new audio files...');
+                await uploadAudioToServer();
+            }
+            
+            // Start real training with progress polling
+            updateAudioProgress(10, 'Initializing training...');
+            
+            const response = await fetch('/start-audio-training', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    use_only_new: true  // Enable smart training
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'started') {
+                // Start polling for progress
+                pollAudioTrainingProgress();
+            } else {
+                throw new Error(data.message || 'Failed to start training');
+            }
+            
+        } catch (error) {
+            console.error('Audio training error:', error);
+            showAudioTrainingError(`An error occurred: ${error.message}`);
+        }
+    }
+
+    async function uploadAudioToServer() {
+        const totalAudio = realAudioFiles.length + aiAudioFiles.length;
+        let uploadedCount = 0;
+        
+        // Upload real audio
+        for (let i = 0; i < realAudioFiles.length; i++) {
+            const formData = new FormData();
+            formData.append('audio', realAudioFiles[i]);
+            formData.append('category', 'real');
+            
+            const response = await fetch('/upload-training-audio', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to upload real audio');
+            }
+            
+            uploadedCount++;
+            const progress = 5 + (uploadedCount / totalAudio) * 25; // 5-30% for uploads
+            updateAudioProgress(Math.round(progress), `Uploading audio files... (${uploadedCount}/${totalAudio})`);
+        }
+        
+        // Upload AI audio
+        for (let i = 0; i < aiAudioFiles.length; i++) {
+            const formData = new FormData();
+            formData.append('audio', aiAudioFiles[i]);
+            formData.append('category', 'ai');
+            
+            const response = await fetch('/upload-training-audio', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to upload AI audio');
+            }
+            
+            uploadedCount++;
+            const progress = 5 + (uploadedCount / totalAudio) * 25; // 5-30% for uploads
+            updateAudioProgress(Math.round(progress), `Uploading audio files... (${uploadedCount}/${totalAudio})`);
+        }
+    }
+
+    function pollAudioTrainingProgress() {
+        audioTrainingInterval = setInterval(async () => {
+            try {
+                const response = await fetch('/get-audio-training-status');
+                const progressData = await response.json();
+                
+                updateAudioProgress(progressData.current, progressData.message);
+                
+                // Stop polling when training is complete or errored
+                if (progressData.current >= 100 || progressData.error) {
+                    clearInterval(audioTrainingInterval);
+                    if (progressData.current >= 100) {
+                        completeAudioTraining(progressData);
+                    } else if (progressData.error) {
+                        showAudioTrainingError(progressData.message);
+                    }
+                }
+            } catch (error) {
+                console.error('Audio progress polling error:', error);
+                clearInterval(audioTrainingInterval);
+                showAudioTrainingError(`Failed to get training progress: ${error.message}`);
+            }
+        }, 3000); // Poll every 3 seconds
+    }
+
+    function completeAudioTraining(progressData) {
+        const trainBtn = document.getElementById('trainBtn');
+        const progressDiv = document.getElementById('trainingProgress');
+        const resultDiv = document.getElementById('trainingResult');
+        
+        setTimeout(() => {
+            if (progressData.stage === 'completed') {
+                resultDiv.innerHTML = `
+                    <div class="result-card human-result">
+                        <h3>✅ Audio Training Successful!</h3>
+                        <p><strong>Accuracy:</strong> ${(parseFloat(progressData.accuracy) * 100).toFixed(2)}%</p>
+                        <p>${progressData.message}</p>
+                        <p>You can now use the audio detection feature!</p>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="result-card ai-result">
+                        <h3>❌ Audio Training Failed</h3>
+                        <p>${progressData.message}</p>
+                        <p>Please check your audio files and try again.</p>
+                    </div>
+                `;
+            }
+            
+            resultDiv.style.display = 'block';
+            progressDiv.style.display = 'none';
+            trainBtn.disabled = false;
+            trainBtn.textContent = '🚀 Start Audio Training';
+            
+            // Clear uploaded audio files and reload fresh stats
+            resetAudioClientCounts();
+        }, 1000);
+    }
+
+    function showAudioTrainingError(message) {
+        const trainBtn = document.getElementById('trainBtn');
+        const progressDiv = document.getElementById('trainingProgress');
+        const resultDiv = document.getElementById('trainingResult');
+        
+        resultDiv.innerHTML = `
+            <div class="result-card ai-result">
+                <h3>❌ Audio Training Error</h3>
+                <p>${message}</p>
+                <p>Please try again or check the server logs.</p>
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+        progressDiv.style.display = 'none';
+        trainBtn.disabled = false;
+        trainBtn.textContent = '🚀 Start Audio Training';
+    }
+
+    function resetAudioClientCounts() {
+        realAudioFiles = [];
+        aiAudioFiles = [];
+        updateAudioFileList('realFileList', []);
+        updateAudioFileList('aiFileList', []);
+        
+        // Reload fresh stats from server
+        loadAudioDatasetStats();
+    }
+</script>
+</body>
+</html>

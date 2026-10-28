@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Text Model - SUMAIYANS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #ff6b6b;
+            --accent-dark: #e55c5c;
+            --purple: #9c27b0;
+            --orange: #ff9800;
+            --green: #4CAF50;
+            --dark: #333;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: var(--transition);
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .training-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .training-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .training-column {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .training-column h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            resize: vertical;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .file-upload-section {
+            border: 2px dashed #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .file-upload-section:hover {
+            border-color: var(--primary);
+            background: #f8f9fa;
+        }
+
+        .file-upload-section.dragover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .file-label i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .file-preview h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .preview-content {
+            max-height: 150px;
+            overflow-y: auto;
+            background: white;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .stats-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .train-btn {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .train-btn:hover {
+            background: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .train-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .success {
+            border-left: 5px solid var(--green);
+        }
+
+        .error {
+            border-left: 5px solid var(--red);
+        }
+
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .example-text {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .uploaded-files {
+            margin-top: 1rem;
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+        }
+
+        .uploaded-file i {
+            color: var(--green);
+        }
+
+        /* Enhanced Professional Footer */
+        footer {
+            background: #1a202c;
+            color: white;
+            padding: 2.5rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .brand-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-tagline {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        .developer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .developer-section {
+                align-items: center;
+            }
+        }
+
+        .developer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .developer-info:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .developer-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .developer-text {
+            font-size: 0.95rem;
+            color: #a0aec0;
+        }
+
+        .developer-text strong {
+            color: white;
+            font-weight: 700;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            color: #a0aec0;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .social-link:hover {
+            color: white;
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #2d3748;
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-keyboard"></i> Train Text Detection Model</h1>
+                <p>Upload text files or type examples to train your AI detection model</p>
+                <a href="/" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="trainForm" enctype="multipart/form-data">
+            <div class="training-container">
+                <!-- Human Texts Column -->
+                <div class="training-column">
+                    <h3><i class="fas fa-user"></i> Human Texts</h3>
+                    
+                    <textarea 
+                        name="human_texts" 
+                        placeholder="Type human-written text examples (one per line) or upload a .txt file:
+
+I think this is really confusing...
+My friend tried to explain but I'm still lost...
+This is pretty cool but complicated...
+Maybe I need to read more about this..."
+                    ></textarea>
+
+                    <div class="file-upload-section" id="humanUploadSection">
+                        <input type="file" id="humanFile" class="file-input" accept=".txt" name="human_file" multiple>
+                        <label for="humanFile" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload Human Texts (.txt files)</span>
+                            <small>Select multiple .txt files - each line treated as separate example</small>
+                        </label>
+                    </div>
+
+                    <div class="file-preview" id="humanPreview">
+                        <h4>File Preview:</h4>
+                        <div class="preview-content" id="humanPreviewContent"></div>
+                    </div>
+
+                    <div class="stats-section">
+                        <div><strong>Human Examples:</strong> <span id="humanCount">0</span></div>
+                        <div><strong>From file:</strong> <span id="humanFileCount">0</span></div>
+                    </div>
+                </div>
+                
+                <!-- AI Texts Column -->
+                <div class="training-column">
+                    <h3><i class="fas fa-robot"></i> AI Texts</h3>
+                    
+                    <textarea 
+                        name="ai_texts" 
+                        placeholder="Type AI-generated text examples (one per line) or upload a .txt file:
+
+As an AI language model, I can explain...
+In conclusion, the process involves...
+Furthermore, it is important to note...
+The implementation requires careful consideration..."
+                    ></textarea>
+
+                    <div class="file-upload-section" id="aiUploadSection">
+                        <input type="file" id="aiFile" class="file-input" accept=".txt" name="ai_file" multiple>
+                        <label for="aiFile" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload AI Texts (.txt files)</span>
+                            <small>Select multiple .txt files - each line treated as separate example</small>
+                        </label>
+                    </div>
+
+                    <div class="file-preview" id="aiPreview">
+                        <h4>File Preview:</h4>
+                        <div class="preview-content" id="aiPreviewContent"></div>
+                    </div>
+
+                    <div class="stats-section">
+                        <div><strong>AI Examples:</strong> <span id="aiCount">0</span></div>
+                        <div><strong>From file:</strong> <span id="aiFileCount">0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="train-btn" id="trainBtn" disabled>
+                <i class="fas fa-graduation-cap"></i> Train Text Model
+            </button>
+        </form>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Training text detection model with your examples...</p>
+        </div>
+        
+        <div id="resultSection" class="result-section">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="brand-section">
+                    <div class="brand-name">Analyzer Data Authenticity</div>
+                    <div class="brand-tagline">Advanced AI-powered fake detection technology</div>
+                </div>
+                <div class="developer-section">
+                    <div class="developer-info">
+                        <div class="developer-logo">S</div>
+                        <div class="developer-text">Developed by <strong>AI&DS dept</strong></div>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/sumaiya-naseer-husen-sarwad-73baa8288/" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/SumaiyaSarwad" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sumaiyansarwad06@gmail.com" target="_blank" class="social-link">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 AI Unimodel Deepfake Detector. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let humanFileTexts = [];
+        let aiFileTexts = [];
+
+        // File upload handlers
+        document.getElementById('humanFile').addEventListener('change', function(e) {
+            handleMultipleFileUpload(e, 'human');
+        });
+
+        document.getElementById('aiFile').addEventListener('change', function(e) {
+            handleMultipleFileUpload(e, 'ai');
+        });
+
+        // Drag and drop handlers
+        ['humanUploadSection', 'aiUploadSection'].forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            const type = sectionId.replace('UploadSection', '');
+            
+            section.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            section.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            section.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                const fileInput = document.getElementById(`${type}File`);
+                fileInput.files = e.dataTransfer.files;
+                fileInput.dispatchEvent(new Event('change'));
+            });
+        });
+
+        // Textarea input handlers
+        document.querySelectorAll('textarea[name="human_texts"], textarea[name="ai_texts"]').forEach(textarea => {
+            textarea.addEventListener('input', updateStats);
+        });
+
+        function handleMultipleFileUpload(event, type) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+
+            let allTexts = [];
+            let filesProcessed = 0;
+            const totalFiles = files.length;
+
+            console.log(`📁 Processing ${totalFiles} ${type} files...`);
+
+            // Clear previous file texts
+            if (type === 'human') {
+                humanFileTexts = [];
+            } else {
+                aiFileTexts = [];
+            }
+
+            files.forEach((file, index) => {
+                if (file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
+                    console.warn(`File ${file.name} is not a .txt file. Skipping.`);
+                    filesProcessed++;
+                    checkAllFilesProcessed();
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    const texts = content.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 10); // Only keep lines with substantial content
+
+                    allTexts = allTexts.concat(texts);
+                    filesProcessed++;
+
+                    console.log(`✅ Processed ${file.name}: ${texts.length} examples`);
+
+                    // Update the appropriate array
+                    if (type === 'human') {
+                        humanFileTexts = allTexts;
+                    } else {
+                        aiFileTexts = allTexts;
+                    }
+
+                    // Update file info
+                    document.getElementById(`${type}FileCount`).textContent = allTexts.length;
+                    
+                    // Show preview for the first file only
+                    if (filesProcessed === 1) {
+                        const preview = document.getElementById(`${type}Preview`);
+                        const previewContent = document.getElementById(`${type}PreviewContent`);
+                        
+                        previewContent.innerHTML = `
+                            <div style="margin-bottom: 0.5rem; color: #666;">
+                                <i class="fas fa-info-circle"></i> 
+                                Processing ${totalFiles} files... (${filesProcessed}/${totalFiles} done)
+                            </div>
+                            ${texts.slice(0, 3).map(text => 
+                                `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: white; border-radius: 4px;">
+                                    ${text.substring(0, 100)}${text.length > 100 ? '...' : ''}
+                                </div>`
+                            ).join('')}
+                        `;
+                        
+                        preview.classList.add('active');
+                    }
+
+                    // Update preview progress
+                    if (filesProcessed > 1) {
+                        const previewContent = document.getElementById(`${type}PreviewContent`);
+                        const firstDiv = previewContent.querySelector('div');
+                        if (firstDiv) {
+                            firstDiv.innerHTML = `<i class="fas fa-info-circle"></i> Processing ${totalFiles} files... (${filesProcessed}/${totalFiles} done)`;
+                        }
+                    }
+
+                    // Check if all files are processed
+                    checkAllFilesProcessed();
+                };
+
+                reader.onerror = function() {
+                    console.error(`❌ Error reading file: ${file.name}`);
+                    filesProcessed++;
+                    checkAllFilesProcessed();
+                };
+
+                reader.readAsText(file);
+            });
+
+            function checkAllFilesProcessed() {
+                if (filesProcessed === totalFiles) {
+                    console.log(`🎉 All ${totalFiles} ${type} files processed! Total examples: ${allTexts.length}`);
+                    
+                    // Final preview update
+                    const previewContent = document.getElementById(`${type}PreviewContent`);
+                    if (previewContent) {
+                        previewContent.innerHTML = `
+                            <div style="margin-bottom: 0.5rem; color: var(--green);">
+                                <i class="fas fa-check-circle"></i> 
+                                All ${totalFiles} files processed! Total: ${allTexts.length} examples
+                            </div>
+                            ${allTexts.slice(0, 3).map(text => 
+                                `<div style="margin-bottom: 0.5rem; padding: 0.5rem; background: white; border-radius: 4px;">
+                                    ${text.substring(0, 100)}${text.length > 100 ? '...' : ''}
+                                </div>`
+                            ).join('')}
+                            ${allTexts.length > 3 ? 
+                                `<div style="color: #666; font-style: italic;">... and ${allTexts.length - 3} more examples</div>` : 
+                                ''
+                            }
+                        `;
+                    }
+                    
+                    updateStats();
+                    updateTrainButton();
+                }
+            }
+        }
+
+        function updateStats() {
+            const humanTyped = document.querySelector('textarea[name="human_texts"]').value
+                .split('\n')
+                .filter(text => text.trim().length > 0);
+            
+            const aiTyped = document.querySelector('textarea[name="ai_texts"]').value
+                .split('\n')
+                .filter(text => text.trim().length > 0);
+
+            const totalHuman = humanTyped.length + humanFileTexts.length;
+            const totalAI = aiTyped.length + aiFileTexts.length;
+
+            document.getElementById('humanCount').textContent = totalHuman;
+            document.getElementById('aiCount').textContent = totalAI;
+            document.getElementById('humanFileCount').textContent = humanFileTexts.length;
+            document.getElementById('aiFileCount').textContent = aiFileTexts.length;
+
+            console.log(`📊 Stats: ${totalHuman} human (${humanFileTexts.length} from files), ${totalAI} AI (${aiFileTexts.length} from files)`);
+        }
+
+        function updateTrainButton() {
+            const totalHuman = humanFileTexts.length + document.querySelector('textarea[name="human_texts"]').value.split('\n').filter(t => t.trim()).length;
+            const totalAI = aiFileTexts.length + document.querySelector('textarea[name="ai_texts"]').value.split('\n').filter(t => t.trim()).length;
+            
+            const trainBtn = document.getElementById('trainBtn');
+            if (totalHuman >= 5 && totalAI >= 5) {
+                trainBtn.disabled = false;
+                trainBtn.innerHTML = '<i class="fas fa-graduation-cap"></i> Train Text Model';
+                trainBtn.title = `Train with ${totalHuman} human and ${totalAI} AI examples`;
+            } else {
+                trainBtn.disabled = true;
+                trainBtn.innerHTML = `Need ${Math.max(0, 5 - totalHuman)} more human and ${Math.max(0, 5 - totalAI)} more AI examples`;
+            }
+        }
+
+        document.getElementById('trainForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const humanTyped = document.querySelector('textarea[name="human_texts"]').value
+                .split('\n')
+                .filter(text => text.trim().length > 0);
+            
+            const aiTyped = document.querySelector('textarea[name="ai_texts"]').value
+                .split('\n')
+                .filter(text => text.trim().length > 0);
+
+            const allHuman = [...humanTyped, ...humanFileTexts];
+            const allAI = [...aiTyped, ...aiFileTexts];
+            
+            console.log(`🚀 Starting training with: ${allHuman.length} human, ${allAI.length} AI examples`);
+            
+            if (allHuman.length < 5 || allAI.length < 5) {
+                showResult('error', 'Please provide at least 5 examples for both human and AI texts');
+                return;
+            }
+            
+            showLoading();
+            hideResult();
+            
+            const formData = new FormData();
+            formData.append('human_texts', allHuman.join('\n'));
+            formData.append('ai_texts', allAI.join('\n'));
+            
+            // Add file data for saving
+            if (humanFileTexts.length > 0) {
+                const humanBlob = new Blob([humanFileTexts.join('\n')], { type: 'text/plain' });
+                formData.append('human_file_data', humanBlob, 'human_training.txt');
+            }
+            
+            if (aiFileTexts.length > 0) {
+                const aiBlob = new Blob([aiFileTexts.join('\n')], { type: 'text/plain' });
+                formData.append('ai_file_data', aiBlob, 'ai_training.txt');
+            }
+
+            try {
+                const response = await fetch('/train-text-model', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.success) {
+                    showResult('success', `
+                        <h3>✅ Training Successful!</h3>
+                        <p><strong>Accuracy:</strong> ${data.accuracy}</p>
+                        <p><strong>Total Human Samples:</strong> ${data.human_samples}</p>
+                        <p><strong>Total AI Samples:</strong> ${data.ai_samples}</p>
+                        <p><strong>From Files:</strong> ${data.from_files || 0} examples</p>
+                        <p>Your text detection model has been updated and is now ready to use!</p>
+                    `);
+                    
+                    // Clear file inputs after successful training
+                    document.getElementById('humanFile').value = '';
+                    document.getElementById('aiFile').value = '';
+                    humanFileTexts = [];
+                    aiFileTexts = [];
+                    updateStats();
+                    updateTrainButton();
+                    
+                } else {
+                    showResult('error', `
+                        <h3>❌ Training Failed</h3>
+                        <p><strong>Error:</strong> ${data.error}</p>
+                        <p>Please check your input and try again.</p>
+                    `);
+                }
+            } catch (error) {
+                hideLoading();
+                showResult('error', `
+                    <h3>❌ Training Failed</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Please try again.</p>
+                `);
+            }
+        });
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        function showResult(type, content) {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.innerHTML = content;
+            resultSection.className = `result-section active ${type}`;
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideResult() {
+            document.getElementById('resultSection').classList.remove('active');
+        }
+
+        // Initialize stats
+        updateStats();
+        updateTrainButton();
+    </script>
+</body>
+</html>
